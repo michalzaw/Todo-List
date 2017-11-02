@@ -14,19 +14,24 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class TasksListActivity extends AppCompatActivity {
+
+    @BindView(R.id.recycerView_tasks) RecyclerView recyclerViewTasks;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tasks_list);
 
+        ButterKnife.bind(this);
+
         initRecycler();
     }
 
     private void initRecycler() {
-        RecyclerView recyclerViewTasks = findViewById(R.id.recycerView_tasks);
-
         TasksAdapter adapter = new TasksAdapter(getTasks());
         recyclerViewTasks.setAdapter(adapter);
         recyclerViewTasks.setLayoutManager(new LinearLayoutManager(this));
