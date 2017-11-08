@@ -1,5 +1,6 @@
 package com.mich.todolist.activities;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -16,6 +17,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class TasksListActivity extends AppCompatActivity {
 
@@ -46,5 +48,11 @@ public class TasksListActivity extends AppCompatActivity {
         }
 
         return tasks;
+    }
+
+    @OnClick(R.id.floatingActionButton_addTask)
+    void onFloatingActionButtonAddTaskClick() {
+        Intent intent = new Intent(this, AddTaskActivity.class);
+        startActivity(intent);
     }
 }

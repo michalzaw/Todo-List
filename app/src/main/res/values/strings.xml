@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">TodoList</string>
+    <string name="task_name">Nazwa zadania</string>
+    <string name="task_description">Opis zadania</string>
+    <string name="task_date">Data</string>
+    <string name="task_hour">Godzina</string>
+    <string name="task_category">Kategoria</string>
+    <string name="task_priority">Priorytet</string>
+    <string name="save">Zapisz</string>
+
+    <string-array name="task_priorities">
+        <item>Niski</item>
+        <item>Średni</item>
+        <item>Wysoki</item>
+    </string-array>
+
+    <string-array name="task_categories">
+        <item>Kategoria 1</item>
+        <item>Kategoria 2</item>
+    </string-array>
 </resources>
