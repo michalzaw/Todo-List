@@ -36,6 +36,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
         Task task = tasksList.get(position);
 
         holder.textViewTitle.setText(task.getTitle());
+        holder.textViewDate.setText(task.getDate());
     }
 
     @Override
@@ -46,11 +47,13 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
     class TasksViewHolder extends RecyclerView.ViewHolder {
 
         private TextView textViewTitle;
+        private TextView textViewDate;
 
         public TasksViewHolder(View itemView) {
             super(itemView);
 
             textViewTitle = itemView.findViewById(R.id.textView_title);
+            textViewDate = itemView.findViewById(R.id.textView_date);
         }
     }
 }

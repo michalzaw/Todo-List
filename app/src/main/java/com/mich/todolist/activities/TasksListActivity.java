@@ -21,7 +21,10 @@ import butterknife.OnClick;
 
 public class TasksListActivity extends AppCompatActivity {
 
-    @BindView(R.id.recycerView_tasks) RecyclerView recyclerViewTasks;
+    @BindView(R.id.recycerView_tasks)
+    RecyclerView recyclerViewTasks;
+
+    List<Task> tasks;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,11 +33,13 @@ public class TasksListActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
+        tasks = getTasks();
+
         initRecycler();
     }
 
     private void initRecycler() {
-        TasksAdapter adapter = new TasksAdapter(getTasks());
+        TasksAdapter adapter = new TasksAdapter(tasks);
         recyclerViewTasks.setAdapter(adapter);
         recyclerViewTasks.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewTasks.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
@@ -44,7 +49,7 @@ public class TasksListActivity extends AppCompatActivity {
         List<Task> tasks = new ArrayList<>();
 
         for (int i = 0; i < 50; ++i) {
-            tasks.add(new Task(i, "Task " + i, "", Calendar.getInstance(), 0,0));
+            tasks.add(new Task(i, "Task " + i, "", "10.10.2010 11:12", 0,0));
         }
 
         return tasks;

@@ -3,19 +3,38 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="72dp"
     android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true">
 
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5" />
+
     <TextView
         android:id="@+id/textView_title"
         android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_weight="1"
+        android:text="Title"
+        android:textColor="@color/primary_text"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline1"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textView_date"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_weight="1"
+        android:text="TextView"
+        android:textColor="@color/secondary_text"
+        app:layout_constraintStart_toStartOf="@+id/textView_title"
+        app:layout_constraintTop_toTopOf="@+id/guideline1" />
+
 </android.support.constraint.ConstraintLayout>

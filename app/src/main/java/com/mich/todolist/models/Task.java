@@ -10,15 +10,15 @@ public class Task {
     private int id;
     private String title;
     private String description;
-    private Calendar time;
+    private String date;
     private int priority;
     private int category;
 
-    public Task(int id, String title, String description, Calendar time, int priority, int category) {
+    public Task(int id, String title, String description, String date, int priority, int category) {
         this.id = id;
         this.title = title;
         this.description = description;
-        this.time = time;
+        this.date = date;
         this.priority = priority;
         this.category = category;
     }
@@ -47,12 +47,12 @@ public class Task {
         this.description = description;
     }
 
-    public Calendar getTime() {
-        return time;
+    public String getDate() {
+        return date;
     }
 
-    public void setTime(Calendar time) {
-        this.time = time;
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public int getPriority() {

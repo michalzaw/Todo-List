@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -57,9 +58,24 @@ public class AddTaskActivity extends AppCompatActivity {
         spinnerPriority.setAdapter(adapterPriorities);
     }
 
+    private void saveNewTask() {
+
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_add_task, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_save_task) {
+            saveNewTask();
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
 
         return true;
     }
