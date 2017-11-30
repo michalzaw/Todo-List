@@ -2,6 +2,7 @@ package com.mich.todolist.activities;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.DateFormat;
@@ -12,7 +13,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.mich.todolist.R;
+import com.mich.todolist.models.Task;
 import com.mich.todolist.utilities.CalendarConverter;
+import com.mich.todolist.utilities.IntentExtras;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -35,6 +38,8 @@ public class AddTaskActivity extends AppCompatActivity {
     Spinner spinnerCategory;
     @BindView(R.id.spinner_priority)
     Spinner spinnerPriority;
+
+    private Calendar taskDate = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +64,23 @@ public class AddTaskActivity extends AppCompatActivity {
     }
 
     private void saveNewTask() {
+        String title = editTextName.getText().toString();
+        String description = editTextDescription.getText().toString();
+        String date = CalendarConverter.calendarToString(taskDate, CalendarConverter.DATE_AND_TIME_FORMAT);
+        int category = spinnerCategory.getSelectedItemPosition();
+        int priority = spinnerPriority.getSelectedItemPosition();
 
+        Task task = new Task(0, title, description, date, category, priority);
+
+        finishActivityWithResult(task);
+    }
+
+    private void finishActivityWithResult(Task task) {
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra(IntentExtras.NEW_TASK, task);
+
+        setResult(RESULT_OK, resultIntent);
+        finish();
     }
 
     @Override
@@ -84,10 +105,9 @@ public class AddTaskActivity extends AppCompatActivity {
     void onEditTextDateClick() {
         Calendar calendar = Calendar.getInstance();
         new DatePickerDialog(this, (datePicker, year, month, dayOfMonth) -> {
-            Calendar c = Calendar.getInstance();
-            c.set(year, month, dayOfMonth);
+            taskDate.set(year, month, dayOfMonth);
 
-            editTextDate.setText(CalendarConverter.calendarToString(c, CalendarConverter.SIMPLE_DATE_FORMAT));
+            editTextDate.setText(CalendarConverter.calendarToString(taskDate, CalendarConverter.SIMPLE_DATE_FORMAT));
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
                 .show();
     }
@@ -96,11 +116,10 @@ public class AddTaskActivity extends AppCompatActivity {
     void onEditTextHourClick() {
         Calendar calendar = Calendar.getInstance();
         new TimePickerDialog(this, (timePicker, hourOfDay, minute) -> {
-            Calendar c = Calendar.getInstance();
-            c.set(Calendar.HOUR_OF_DAY, hourOfDay);
-            c.set(Calendar.MINUTE, minute);
+            taskDate.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            taskDate.set(Calendar.MINUTE, minute);
 
-            editTextHour.setText(CalendarConverter.calendarToString(c, CalendarConverter.SIMPLE_TIME_FORMAT));
+            editTextHour.setText(CalendarConverter.calendarToString(taskDate, CalendarConverter.SIMPLE_TIME_FORMAT));
         }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), DateFormat.is24HourFormat(this))
                 .show();
     }

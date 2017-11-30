@@ -11,6 +11,7 @@ public class CalendarConverter {
 
     public static final String SIMPLE_DATE_FORMAT = "dd.MM.yyyy";
     public static final String SIMPLE_TIME_FORMAT = "HH:mm";
+    public static final String DATE_AND_TIME_FORMAT = "dd.MM.yyyy HH:mm";
 
 
     public static String calendarToString(Calendar calendar, String format) {
