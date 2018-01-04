@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import com.mich.todolist.R;
 import com.mich.todolist.adapters.TasksAdapter;
 import com.mich.todolist.database.ApplicationDatabase;
+import com.mich.todolist.database.LoadTasksListAsyncTask;
 import com.mich.todolist.database.TaskDao;
 import com.mich.todolist.models.TaskEntity;
 import com.mich.todolist.utilities.IntentExtras;
@@ -22,7 +23,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class TasksListActivity extends AppCompatActivity {
+public class TasksListActivity extends AppCompatActivity implements LoadTasksListAsyncTask.LoadTasksListObserver {
 
     private static final int REQUEST_CODE_ADD_TASK = 0;
 
@@ -39,7 +40,16 @@ public class TasksListActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
+        LoadTasksListAsyncTask.getInstance(getApplicationContext()).addObserver(this);
+
         loadTasks();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        LoadTasksListAsyncTask.getInstance(getApplicationContext()).removeObserver(this);
     }
 
     @Override
@@ -63,29 +73,14 @@ public class TasksListActivity extends AppCompatActivity {
     }
 
     private void loadTasks() {
-        AsyncTask<Void, Void, List<TaskEntity>> asyncTask = new AsyncTask<Void, Void, List<TaskEntity>>() {
+        LoadTasksListAsyncTask.getInstance(getApplicationContext()).execute();
+    }
 
-            @Override
-            protected List<TaskEntity> doInBackground(Void... voids) {
-                ApplicationDatabase database = ApplicationDatabase.getInstance(getApplicationContext());
-                TaskDao dao = database.taskDao();
+    @Override
+    public void onTasksLoaded(List<TaskEntity> tasks) {
+        this.tasks = tasks;
 
-                return dao.getAllTasks();
-            }
-
-            @Override
-            protected void onPostExecute(List<TaskEntity> taskEntities) {
-                tasks = taskEntities;
-
-                initRecycler();
-            }
-        };
-
-        asyncTask.execute();
-
-        /*for (int i = 0; i < 2; ++i) {
-            tasks.add(new TaskEntity("TaskEntity " + i, "", "10.10.2010 11:12", 0,0));
-        }*/
+        initRecycler();
     }
 
     @OnClick(R.id.floatingActionButton_addTask)

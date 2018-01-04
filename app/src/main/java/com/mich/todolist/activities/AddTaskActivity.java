@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.mich.todolist.R;
+import com.mich.todolist.database.AddNewTaskAsyncTask;
 import com.mich.todolist.database.ApplicationDatabase;
 import com.mich.todolist.database.TaskDao;
 import com.mich.todolist.models.TaskEntity;
@@ -26,7 +27,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class AddTaskActivity extends AppCompatActivity {
+public class AddTaskActivity extends AppCompatActivity implements AddNewTaskAsyncTask.AddNewTaskObserver {
 
     @BindView(R.id.editText_name)
     EditText editTextName;
@@ -50,7 +51,16 @@ public class AddTaskActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
+        AddNewTaskAsyncTask.getInstance(getApplicationContext()).addObserver(this);
+
         initSpinners();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        AddNewTaskAsyncTask.getInstance(getApplicationContext()).removeObserver(this);
     }
 
     private void initSpinners() {
@@ -66,7 +76,6 @@ public class AddTaskActivity extends AppCompatActivity {
     }
 
     private void saveNewTask() {
-
         String title = editTextName.getText().toString();
         String description = editTextDescription.getText().toString();
         String date = CalendarConverter.calendarToString(taskDate, CalendarConverter.DATE_AND_TIME_FORMAT);
@@ -75,27 +84,12 @@ public class AddTaskActivity extends AppCompatActivity {
 
         TaskEntity task = new TaskEntity(title, description, date, priority, category);
 
-        AsyncTask<TaskEntity, Void, TaskEntity> asyncTask = new AsyncTask<TaskEntity, Void, TaskEntity>() {
-
-            @Override
-            protected TaskEntity doInBackground(TaskEntity... taskEntities) {
-                ApplicationDatabase database = ApplicationDatabase.getInstance(getApplicationContext());
-                TaskDao dao = database.taskDao();
-
-                dao.insert(taskEntities[0]);
-                return taskEntities[0];
-            }
-
-            @Override
-            protected void onPostExecute(TaskEntity task) {
-
-                finishActivityWithResult(task);
-            }
-        };
-        asyncTask.execute(task);
+        AddNewTaskAsyncTask.getInstance(getApplicationContext()).execute(task);
     }
 
-    private void finishActivityWithResult(TaskEntity task) {
+    @Override
+    public void onAddedNewTask(TaskEntity task) {
+        // TODO: if (task == null) ...
         Intent resultIntent = new Intent();
         resultIntent.putExtra(IntentExtras.NEW_TASK, task);
 
