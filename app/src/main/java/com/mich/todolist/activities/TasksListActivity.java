@@ -1,6 +1,7 @@
 package com.mich.todolist.activities;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -9,11 +10,12 @@ import android.support.v7.widget.RecyclerView;
 
 import com.mich.todolist.R;
 import com.mich.todolist.adapters.TasksAdapter;
-import com.mich.todolist.models.Task;
+import com.mich.todolist.database.ApplicationDatabase;
+import com.mich.todolist.database.TaskDao;
+import com.mich.todolist.models.TaskEntity;
 import com.mich.todolist.utilities.IntentExtras;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
@@ -27,7 +29,7 @@ public class TasksListActivity extends AppCompatActivity {
     @BindView(R.id.recycerView_tasks)
     RecyclerView recyclerViewTasks;
 
-    private List<Task> tasks;
+    private List<TaskEntity> tasks;
     private TasksAdapter tasksAdapter;
 
     @Override
@@ -37,9 +39,7 @@ public class TasksListActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        tasks = getTasks();
-
-        initRecycler();
+        loadTasks();
     }
 
     @Override
@@ -47,7 +47,7 @@ public class TasksListActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CODE_ADD_TASK && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             if (extras != null) {
-                Task task = extras.getParcelable(IntentExtras.NEW_TASK);
+                TaskEntity task = extras.getParcelable(IntentExtras.NEW_TASK);
                 tasks.add(task);
 
                 tasksAdapter.notifyDataSetChanged();
@@ -62,14 +62,30 @@ public class TasksListActivity extends AppCompatActivity {
         recyclerViewTasks.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
     }
 
-    private List<Task> getTasks() {
-        List<Task> tasks = new ArrayList<>();
+    private void loadTasks() {
+        AsyncTask<Void, Void, List<TaskEntity>> asyncTask = new AsyncTask<Void, Void, List<TaskEntity>>() {
 
-        for (int i = 0; i < 2; ++i) {
-            tasks.add(new Task(i, "Task " + i, "", "10.10.2010 11:12", 0,0));
-        }
+            @Override
+            protected List<TaskEntity> doInBackground(Void... voids) {
+                ApplicationDatabase database = ApplicationDatabase.getInstance(getApplicationContext());
+                TaskDao dao = database.taskDao();
 
-        return tasks;
+                return dao.getAllTasks();
+            }
+
+            @Override
+            protected void onPostExecute(List<TaskEntity> taskEntities) {
+                tasks = taskEntities;
+
+                initRecycler();
+            }
+        };
+
+        asyncTask.execute();
+
+        /*for (int i = 0; i < 2; ++i) {
+            tasks.add(new TaskEntity("TaskEntity " + i, "", "10.10.2010 11:12", 0,0));
+        }*/
     }
 
     @OnClick(R.id.floatingActionButton_addTask)

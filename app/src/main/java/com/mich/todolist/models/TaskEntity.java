@@ -1,23 +1,32 @@
 package com.mich.todolist.models;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import java.util.Calendar;
 
 /**
  * Created by Michal on 01.11.2017.
  */
 
-public class Task implements Parcelable {
+@Entity(tableName = "task")
+public class TaskEntity implements Parcelable {
+
+    @PrimaryKey(autoGenerate = true)
     private int id;
+    @ColumnInfo(name = "title")
     private String title;
+    @ColumnInfo(name = "description")
     private String description;
+    @ColumnInfo(name = "date")
     private String date;
+    @ColumnInfo(name = "priority")
     private int priority;
+    @ColumnInfo(name = "category")
     private int category;
 
-    public Task(int id, String title, String description, String date, int priority, int category) {
+    public TaskEntity(String title, String description, String date, int priority, int category) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -26,7 +35,7 @@ public class Task implements Parcelable {
         this.category = category;
     }
 
-    protected Task(Parcel in) {
+    protected TaskEntity(Parcel in) {
         id = in.readInt();
         title = in.readString();
         description = in.readString();
@@ -35,15 +44,15 @@ public class Task implements Parcelable {
         category = in.readInt();
     }
 
-    public static final Creator<Task> CREATOR = new Creator<Task>() {
+    public static final Creator<TaskEntity> CREATOR = new Creator<TaskEntity>() {
         @Override
-        public Task createFromParcel(Parcel in) {
-            return new Task(in);
+        public TaskEntity createFromParcel(Parcel in) {
+            return new TaskEntity(in);
         }
 
         @Override
-        public Task[] newArray(int size) {
-            return new Task[size];
+        public TaskEntity[] newArray(int size) {
+            return new TaskEntity[size];
         }
     };
 

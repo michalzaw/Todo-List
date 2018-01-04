@@ -7,8 +7,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.mich.todolist.R;
-import com.mich.todolist.models.Task;
+import com.mich.todolist.models.TaskEntity;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -17,9 +18,9 @@ import java.util.List;
 
 public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHolder> {
 
-    private List<Task> tasksList;
+    private List<TaskEntity> tasksList = Collections.emptyList();
 
-    public TasksAdapter(List<Task> tasksList) {
+    public TasksAdapter(List<TaskEntity> tasksList) {
         this.tasksList = tasksList;
     }
 
@@ -33,7 +34,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
 
     @Override
     public void onBindViewHolder(TasksViewHolder holder, int position) {
-        Task task = tasksList.get(position);
+        TaskEntity task = tasksList.get(position);
 
         holder.textViewTitle.setText(task.getTitle());
         holder.textViewDate.setText(task.getDate());

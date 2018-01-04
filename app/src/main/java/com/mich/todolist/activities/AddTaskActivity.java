@@ -3,6 +3,7 @@ package com.mich.todolist.activities;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.DateFormat;
@@ -13,11 +14,12 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.mich.todolist.R;
-import com.mich.todolist.models.Task;
+import com.mich.todolist.database.ApplicationDatabase;
+import com.mich.todolist.database.TaskDao;
+import com.mich.todolist.models.TaskEntity;
 import com.mich.todolist.utilities.CalendarConverter;
 import com.mich.todolist.utilities.IntentExtras;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import butterknife.BindView;
@@ -64,18 +66,36 @@ public class AddTaskActivity extends AppCompatActivity {
     }
 
     private void saveNewTask() {
+
         String title = editTextName.getText().toString();
         String description = editTextDescription.getText().toString();
         String date = CalendarConverter.calendarToString(taskDate, CalendarConverter.DATE_AND_TIME_FORMAT);
         int category = spinnerCategory.getSelectedItemPosition();
         int priority = spinnerPriority.getSelectedItemPosition();
 
-        Task task = new Task(0, title, description, date, category, priority);
+        TaskEntity task = new TaskEntity(title, description, date, priority, category);
 
-        finishActivityWithResult(task);
+        AsyncTask<TaskEntity, Void, TaskEntity> asyncTask = new AsyncTask<TaskEntity, Void, TaskEntity>() {
+
+            @Override
+            protected TaskEntity doInBackground(TaskEntity... taskEntities) {
+                ApplicationDatabase database = ApplicationDatabase.getInstance(getApplicationContext());
+                TaskDao dao = database.taskDao();
+
+                dao.insert(taskEntities[0]);
+                return taskEntities[0];
+            }
+
+            @Override
+            protected void onPostExecute(TaskEntity task) {
+
+                finishActivityWithResult(task);
+            }
+        };
+        asyncTask.execute(task);
     }
 
-    private void finishActivityWithResult(Task task) {
+    private void finishActivityWithResult(TaskEntity task) {
         Intent resultIntent = new Intent();
         resultIntent.putExtra(IntentExtras.NEW_TASK, task);
 
