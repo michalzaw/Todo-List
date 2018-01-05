@@ -1,9 +1,11 @@
 package com.mich.todolist.adapters;
 
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mich.todolist.R;
@@ -65,14 +67,44 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
 
         private TextView textViewTitle;
         private TextView textViewDate;
-        public View foreground;
+        private View foregroundView;
+        private ImageView imageViewDeleteLeft;
+        private TextView textViewDeleteLeft;
+        private ImageView imageViewDeleteRight;
+        private TextView textViewDeleteRight;
+
+        public static final int LEFT = 1;
+        public static final int RIGHT = 2;
 
         public TasksViewHolder(View itemView) {
             super(itemView);
 
             textViewTitle = itemView.findViewById(R.id.textView_title);
             textViewDate = itemView.findViewById(R.id.textView_date);
-            foreground = itemView.findViewById(R.id.foreground);
+            foregroundView = itemView.findViewById(R.id.foregroundView);
+            imageViewDeleteLeft = itemView.findViewById(R.id.imageViewDeleteLeft);
+            textViewDeleteLeft = itemView.findViewById(R.id.textViewDeleteLeft);
+            imageViewDeleteRight= itemView.findViewById(R.id.imageViewDeleteRight);
+            textViewDeleteRight = itemView.findViewById(R.id.textViewDeleteRight);
+        }
+
+        public View getForegroundView() {
+            return foregroundView;
+        }
+
+        public void setDeleteLabelVisibility(int dir) {
+            if (dir == LEFT) {
+                imageViewDeleteLeft.setVisibility(View.VISIBLE);
+                textViewDeleteLeft.setVisibility(View.VISIBLE);
+                imageViewDeleteRight.setVisibility(View.GONE);
+                textViewDeleteRight.setVisibility(View.GONE);
+            } else if (dir == RIGHT) {
+                imageViewDeleteRight.setVisibility(View.VISIBLE);
+                textViewDeleteRight.setVisibility(View.VISIBLE);
+                imageViewDeleteLeft.setVisibility(View.GONE);
+                textViewDeleteLeft.setVisibility(View.GONE);
+
+            }
         }
     }
 }

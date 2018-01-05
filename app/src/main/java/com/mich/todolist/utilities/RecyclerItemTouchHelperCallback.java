@@ -37,26 +37,32 @@ public class RecyclerItemTouchHelperCallback extends ItemTouchHelper.SimpleCallb
     @Override
     public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
         if (viewHolder != null) {
-            View foreground = ((TasksAdapter.TasksViewHolder)viewHolder).foreground;
+            View foreground = ((TasksAdapter.TasksViewHolder)viewHolder).getForegroundView();
             getDefaultUIUtil().onSelected(foreground);
         }
     }
 
     @Override
     public void onChildDrawOver(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
-        View foreground = ((TasksAdapter.TasksViewHolder)viewHolder).foreground;
+        TasksAdapter.TasksViewHolder holder = (TasksAdapter.TasksViewHolder) viewHolder;
+
+        View foreground = holder.getForegroundView();
         getDefaultUIUtil().onDrawOver(c, recyclerView, foreground, dX, dY, actionState, isCurrentlyActive);
+
+        holder.setDeleteLabelVisibility(dX > 0 ? TasksAdapter.TasksViewHolder.LEFT : TasksAdapter.TasksViewHolder.RIGHT);
     }
 
     @Override
     public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-        View foreground = ((TasksAdapter.TasksViewHolder)viewHolder).foreground;
+        View foreground = ((TasksAdapter.TasksViewHolder)viewHolder).getForegroundView();
         getDefaultUIUtil().clearView(foreground);
     }
 
     @Override
     public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
-        View foreground = ((TasksAdapter.TasksViewHolder)viewHolder).foreground;
+        TasksAdapter.TasksViewHolder holder = (TasksAdapter.TasksViewHolder) viewHolder;
+
+        View foreground = holder.getForegroundView();
         getDefaultUIUtil().onDraw(c, recyclerView, foreground, dX, dY, actionState, isCurrentlyActive);
     }
 

@@ -7,6 +7,7 @@
     <string name="task_category">Kategoria</string>
     <string name="task_priority">Priorytet</string>
     <string name="save">Zapisz</string>
+    <string name="delete">Usuń</string>
 
     <string-array name="task_priorities">
         <item>Niski</item>
