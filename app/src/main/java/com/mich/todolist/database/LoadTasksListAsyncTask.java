@@ -51,7 +51,6 @@ public class LoadTasksListAsyncTask extends AsyncTask<Void, Void, List<TaskEntit
         TaskDao dao = database.taskDao();
 
         List<TaskEntity> tasks = dao.getAllTasks();
-        database.close();
 
         return tasks;
     }
@@ -61,5 +60,8 @@ public class LoadTasksListAsyncTask extends AsyncTask<Void, Void, List<TaskEntit
         for (LoadTasksListObserver observer : observers) {
             observer.onTasksLoaded(taskEntities);
         }
+
+        instance = new LoadTasksListAsyncTask();
+        instance.observers = observers;
     }
 }

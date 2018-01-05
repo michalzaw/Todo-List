@@ -45,16 +45,34 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
         return tasksList.size();
     }
 
-    class TasksViewHolder extends RecyclerView.ViewHolder {
+    public TaskEntity getTask(int index) {
+        return tasksList.get(index);
+    }
+
+    public void addTask(TaskEntity task) {
+        tasksList.add(task);
+
+        notifyItemInserted(tasksList.size() -  1);
+    }
+
+    public void removeTask(int index) {
+        tasksList.remove(index);
+
+        notifyItemRemoved(index);
+    }
+
+    public class TasksViewHolder extends RecyclerView.ViewHolder {
 
         private TextView textViewTitle;
         private TextView textViewDate;
+        public View foreground;
 
         public TasksViewHolder(View itemView) {
             super(itemView);
 
             textViewTitle = itemView.findViewById(R.id.textView_title);
             textViewDate = itemView.findViewById(R.id.textView_date);
+            foreground = itemView.findViewById(R.id.foreground);
         }
     }
 }

@@ -52,7 +52,6 @@ public class AddNewTaskAsyncTask extends AsyncTask<TaskEntity, Void, TaskEntity>
 
         if (taskEntities.length == 1) {
             dao.insert(taskEntities[0]);
-            database.close();
 
             return taskEntities[0];
         }
@@ -67,5 +66,8 @@ public class AddNewTaskAsyncTask extends AsyncTask<TaskEntity, Void, TaskEntity>
         for (AddNewTaskObserver observer : observers) {
             observer.onAddedNewTask(taskEntity);
         }
+
+        instance = new AddNewTaskAsyncTask();
+        instance.observers = observers;
     }
 }
