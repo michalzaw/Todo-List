@@ -21,9 +21,14 @@ import java.util.List;
 public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHolder> {
 
     private List<TaskEntity> tasksList = Collections.emptyList();
+    private OnClickListener onClickListener;
 
     public TasksAdapter(List<TaskEntity> tasksList) {
         this.tasksList = tasksList;
+    }
+
+    public void setOnClickListener(OnClickListener onClickListener) {
+        this.onClickListener = onClickListener;
     }
 
     @Override
@@ -40,6 +45,11 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
 
         holder.textViewTitle.setText(task.getTitle());
         holder.textViewDate.setText(task.getDate());
+
+        holder.itemView.setOnClickListener(view -> {
+            if (onClickListener != null)
+                onClickListener.onClick(holder.getAdapterPosition());
+        });
     }
 
     @Override
@@ -106,5 +116,9 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
 
             }
         }
+    }
+
+    public interface OnClickListener {
+        void onClick(int position);
     }
 }

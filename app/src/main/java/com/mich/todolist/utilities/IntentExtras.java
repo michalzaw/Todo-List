@@ -6,4 +6,5 @@ package com.mich.todolist.utilities;
 
 public class IntentExtras {
     public static final String NEW_TASK = "newTask";
+    public static final String TASK = "task";
 }

@@ -80,10 +80,18 @@ public class TasksListActivity extends AppCompatActivity
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new RecyclerItemTouchHelperCallback(
                 this, 0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT));
         itemTouchHelper.attachToRecyclerView(recyclerViewTasks);
+
+        tasksAdapter.setOnClickListener(position -> openTaskDetails(tasksAdapter.getTask(position)));
     }
 
     private void loadTasks() {
         LoadTasksListAsyncTask.getInstance(getApplicationContext()).execute();
+    }
+
+    private void openTaskDetails(TaskEntity task) {
+        Intent intent = new Intent(this, TaskDetailsActivity.class);
+        intent.putExtra(IntentExtras.TASK, task);
+        startActivity(intent);
     }
 
     @Override
