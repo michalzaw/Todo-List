@@ -1,5 +1,8 @@
 package com.mich.todolist.utilities;
 
+import android.util.Log;
+
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -18,5 +21,18 @@ public class CalendarConverter {
         SimpleDateFormat dateFormat = new SimpleDateFormat(format);
 
         return dateFormat.format(calendar.getTime());
+    }
+
+    public static Calendar stringToCalendar(String dateTime, String format) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+
+        Calendar calendar = Calendar.getInstance();
+        try {
+            calendar.setTime(dateFormat.parse(dateTime));
+            return calendar;
+        } catch (ParseException e) {
+            Log.e("ERROR", "Invalid date format");
+            return Calendar.getInstance();
+        }
     }
 }

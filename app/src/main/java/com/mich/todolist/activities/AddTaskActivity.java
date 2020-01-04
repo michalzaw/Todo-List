@@ -59,10 +59,12 @@ public class AddTaskActivity extends AppCompatActivity {
         if (bundle != null) {
             task = bundle.getParcelable(IntentExtras.TASK);
 
+            taskDate = CalendarConverter.stringToCalendar(task.getDate(), CalendarConverter.DATE_AND_TIME_FORMAT);
+
             editTextName.setText(task.getTitle());
             editTextDescription.setText(task.getDescription());
-            editTextDate.setText(task.getDate());
-            editTextHour.setText(task.getDate());
+            editTextDate.setText(CalendarConverter.calendarToString(taskDate, CalendarConverter.SIMPLE_DATE_FORMAT));
+            editTextHour.setText(CalendarConverter.calendarToString(taskDate, CalendarConverter.SIMPLE_TIME_FORMAT));
             spinnerCategory.setSelection(task.getCategory());
             spinnerPriority.setSelection(task.getPriority());
         } else {
