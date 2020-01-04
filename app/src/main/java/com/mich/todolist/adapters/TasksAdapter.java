@@ -20,10 +20,14 @@ import java.util.List;
 
 public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHolder> {
 
-    private List<TaskEntity> tasksList = Collections.emptyList();
+    private List<TaskEntity> tasksList;
     private OnClickListener onClickListener;
 
     public TasksAdapter(List<TaskEntity> tasksList) {
+        this.tasksList = tasksList;
+    }
+
+    public void setTasks(List<TaskEntity> tasksList) {
         this.tasksList = tasksList;
     }
 

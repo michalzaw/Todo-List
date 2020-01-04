@@ -2,8 +2,6 @@ package com.mich.todolist.activities;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.DateFormat;
@@ -14,9 +12,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.mich.todolist.R;
-import com.mich.todolist.database.AddNewTaskAsyncTask;
-import com.mich.todolist.database.ApplicationDatabase;
-import com.mich.todolist.database.TaskDao;
+import com.mich.todolist.database.TaskRepository;
 import com.mich.todolist.models.TaskEntity;
 import com.mich.todolist.utilities.CalendarConverter;
 import com.mich.todolist.utilities.IntentExtras;
@@ -27,7 +23,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class AddTaskActivity extends AppCompatActivity implements AddNewTaskAsyncTask.AddNewTaskObserver {
+public class AddTaskActivity extends AppCompatActivity {
 
     @BindView(R.id.editText_name)
     EditText editTextName;
@@ -44,6 +40,10 @@ public class AddTaskActivity extends AppCompatActivity implements AddNewTaskAsyn
 
     private Calendar taskDate = Calendar.getInstance();
 
+    private TaskEntity task;
+
+    TaskRepository taskRepository;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,16 +51,23 @@ public class AddTaskActivity extends AppCompatActivity implements AddNewTaskAsyn
 
         ButterKnife.bind(this);
 
-        AddNewTaskAsyncTask.getInstance(getApplicationContext()).addObserver(this);
-
         initSpinners();
-    }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+        taskRepository = new TaskRepository(this);
 
-        AddNewTaskAsyncTask.getInstance(getApplicationContext()).removeObserver(this);
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            task = bundle.getParcelable(IntentExtras.TASK);
+
+            editTextName.setText(task.getTitle());
+            editTextDescription.setText(task.getDescription());
+            editTextDate.setText(task.getDate());
+            editTextHour.setText(task.getDate());
+            spinnerCategory.setSelection(task.getCategory());
+            spinnerPriority.setSelection(task.getPriority());
+        } else {
+
+        }
     }
 
     private void initSpinners() {
@@ -75,26 +82,30 @@ public class AddTaskActivity extends AppCompatActivity implements AddNewTaskAsyn
         spinnerPriority.setAdapter(adapterPriorities);
     }
 
-    private void saveNewTask() {
+    private void saveTask() {
         String title = editTextName.getText().toString();
         String description = editTextDescription.getText().toString();
         String date = CalendarConverter.calendarToString(taskDate, CalendarConverter.DATE_AND_TIME_FORMAT);
         int category = spinnerCategory.getSelectedItemPosition();
         int priority = spinnerPriority.getSelectedItemPosition();
 
-        TaskEntity task = new TaskEntity(title, description, date, priority, category);
+        if (task == null) {
+            task = new TaskEntity(title, description, date, priority, category);
 
-        AddNewTaskAsyncTask.getInstance(getApplicationContext()).execute(task);
-    }
+            taskRepository.addTask(task, () -> {
+                finish();
+                return null;
+            });
+        } else {
+            task.setTitle(title);
+            task.setDescription(description);
+            task.setDate(date);
+            task.setCategory(category);
+            task.setPriority(priority);
 
-    @Override
-    public void onAddedNewTask(TaskEntity task) {
-        // TODO: if (task == null) ...
-        Intent resultIntent = new Intent();
-        resultIntent.putExtra(IntentExtras.NEW_TASK, task);
-
-        setResult(RESULT_OK, resultIntent);
-        finish();
+            taskRepository.updateTask(task);
+            finish();
+        }
     }
 
     @Override
@@ -107,7 +118,7 @@ public class AddTaskActivity extends AppCompatActivity implements AddNewTaskAsyn
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_save_task) {
-            saveNewTask();
+            saveTask();
         } else {
             return super.onOptionsItemSelected(item);
         }

@@ -4,6 +4,7 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.Update;
 
 import com.mich.todolist.models.TaskEntity;
 
@@ -20,6 +21,9 @@ public interface TaskDao {
 
     @Insert
     void insert(TaskEntity task);
+
+    @Update
+    void update(TaskEntity task);
 
     @Delete
     void delete(TaskEntity taskEntity);

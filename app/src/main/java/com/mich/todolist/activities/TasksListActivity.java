@@ -11,15 +11,13 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 
 import com.mich.todolist.R;
 import com.mich.todolist.adapters.TasksAdapter;
-import com.mich.todolist.database.ApplicationDatabase;
 import com.mich.todolist.database.DeleteTaskAsyncTask;
 import com.mich.todolist.database.LoadTasksListAsyncTask;
-import com.mich.todolist.database.TaskDao;
 import com.mich.todolist.models.TaskEntity;
 import com.mich.todolist.utilities.IntentExtras;
 import com.mich.todolist.utilities.RecyclerItemTouchHelperCallback;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -30,12 +28,10 @@ public class TasksListActivity extends AppCompatActivity
         implements LoadTasksListAsyncTask.LoadTasksListObserver, RecyclerItemTouchHelperCallback.RecyclerItemTouchHelperListener,
         DeleteTaskAsyncTask.DeleteTaskObserver {
 
-    private static final int REQUEST_CODE_ADD_TASK = 0;
-
     @BindView(R.id.recycerView_tasks)
     RecyclerView recyclerViewTasks;
 
-    private List<TaskEntity> tasks;
+    private List<TaskEntity> tasks = Collections.emptyList();
     private TasksAdapter tasksAdapter;
 
     @Override
@@ -48,7 +44,8 @@ public class TasksListActivity extends AppCompatActivity
         LoadTasksListAsyncTask.getInstance(getApplicationContext()).addObserver(this);
         DeleteTaskAsyncTask.getInstance(getApplicationContext()).addObserver(this);
 
-        loadTasks();
+        initRecycler();
+        //loadTasks();
     }
 
     @Override
@@ -60,15 +57,10 @@ public class TasksListActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CODE_ADD_TASK && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            if (extras != null) {
-                TaskEntity task = extras.getParcelable(IntentExtras.NEW_TASK);
+    protected void onResume() {
+        super.onResume();
 
-                tasksAdapter.addTask(task);
-            }
-        }
+        loadTasks();
     }
 
     private void initRecycler() {
@@ -89,7 +81,7 @@ public class TasksListActivity extends AppCompatActivity
     }
 
     private void openTaskDetails(TaskEntity task) {
-        Intent intent = new Intent(this, TaskDetailsActivity.class);
+        Intent intent = new Intent(this, AddTaskActivity.class);
         intent.putExtra(IntentExtras.TASK, task);
         startActivity(intent);
     }
@@ -98,7 +90,8 @@ public class TasksListActivity extends AppCompatActivity
     public void onTasksLoaded(List<TaskEntity> tasks) {
         this.tasks = tasks;
 
-        initRecycler();
+        tasksAdapter.setTasks(tasks);
+        tasksAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -119,6 +112,6 @@ public class TasksListActivity extends AppCompatActivity
     @OnClick(R.id.floatingActionButton_addTask)
     void onFloatingActionButtonAddTaskClick() {
         Intent intent = new Intent(this, AddTaskActivity.class);
-        startActivityForResult(intent, REQUEST_CODE_ADD_TASK);
+        startActivity(intent);
     }
 }

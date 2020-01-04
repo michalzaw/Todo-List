@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by Michal on 04.01.2018.
  */
-
+@Deprecated
 public class AddNewTaskAsyncTask extends AsyncTask<TaskEntity, Void, TaskEntity> {
 
     public interface AddNewTaskObserver {
