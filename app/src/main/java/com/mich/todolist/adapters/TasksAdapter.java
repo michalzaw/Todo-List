@@ -50,6 +50,8 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
         holder.textViewTitle.setText(task.getTitle());
         holder.textViewDate.setText(task.getDate());
 
+        holder.imageViewDone.setVisibility(task.isDone() ? View.VISIBLE : View.GONE);
+
         holder.itemView.setOnClickListener(view -> {
             if (onClickListener != null)
                 onClickListener.onClick(holder.getAdapterPosition());
@@ -81,6 +83,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
 
         private TextView textViewTitle;
         private TextView textViewDate;
+        private ImageView imageViewDone;
         private View foregroundView;
         private ImageView imageViewDeleteLeft;
         private TextView textViewDeleteLeft;
@@ -95,6 +98,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
 
             textViewTitle = itemView.findViewById(R.id.textView_title);
             textViewDate = itemView.findViewById(R.id.textView_date);
+            imageViewDone = itemView.findViewById(R.id.imageViewDone);
             foregroundView = itemView.findViewById(R.id.foregroundView);
             imageViewDeleteLeft = itemView.findViewById(R.id.imageViewDeleteLeft);
             textViewDeleteLeft = itemView.findViewById(R.id.textViewDeleteLeft);

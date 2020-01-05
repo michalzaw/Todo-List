@@ -92,7 +92,7 @@ public class AddTaskActivity extends AppCompatActivity {
         int priority = spinnerPriority.getSelectedItemPosition();
 
         if (task == null) {
-            task = new TaskEntity(title, description, date, priority, category);
+            task = new TaskEntity(title, description, date, priority, category, false);
 
             taskRepository.addTask(task, () -> {
                 finish();
@@ -114,12 +114,19 @@ public class AddTaskActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_add_task, menu);
 
+        if (task == null) {
+            menu.findItem(R.id.action_complete_task).setVisible(false);
+        }
+
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_save_task) {
+            saveTask();
+        } else if (item.getItemId() == R.id.action_complete_task) {
+            task.setDone(true);
             saveTask();
         } else {
             return super.onOptionsItemSelected(item);

@@ -25,14 +25,17 @@ public class TaskEntity implements Parcelable {
     private int priority;
     @ColumnInfo(name = "category")
     private int category;
+    @ColumnInfo(name = "done")
+    private boolean done;
 
-    public TaskEntity(String title, String description, String date, int priority, int category) {
+    public TaskEntity(String title, String description, String date, int priority, int category, boolean done) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.date = date;
         this.priority = priority;
         this.category = category;
+        this.done = done;
     }
 
     protected TaskEntity(Parcel in) {
@@ -42,6 +45,7 @@ public class TaskEntity implements Parcelable {
         date = in.readString();
         priority = in.readInt();
         category = in.readInt();
+        done = in.readByte() != 0;
     }
 
     public static final Creator<TaskEntity> CREATOR = new Creator<TaskEntity>() {
@@ -104,6 +108,14 @@ public class TaskEntity implements Parcelable {
         this.category = category;
     }
 
+    public boolean isDone() {
+        return done;
+    }
+
+    public void setDone(boolean done) {
+        this.done = done;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -117,5 +129,6 @@ public class TaskEntity implements Parcelable {
         parcel.writeString(date);
         parcel.writeInt(priority);
         parcel.writeInt(category);
+        parcel.writeByte((byte) (done ? 1 : 0));
     }
 }
