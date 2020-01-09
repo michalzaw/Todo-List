@@ -2,12 +2,15 @@ package com.mich.todolist.activities;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.mich.todolist.R;
 import com.mich.todolist.adapters.TasksAdapter;
@@ -16,6 +19,8 @@ import com.mich.todolist.database.LoadTasksListAsyncTask;
 import com.mich.todolist.models.TaskEntity;
 import com.mich.todolist.utilities.IntentExtras;
 import com.mich.todolist.utilities.RecyclerItemTouchHelperCallback;
+import com.mich.todolist.utilities.SortType;
+import com.mich.todolist.utilities.TaskComparator;
 
 import java.util.Collections;
 import java.util.List;
@@ -33,6 +38,8 @@ public class TasksListActivity extends AppCompatActivity
 
     private List<TaskEntity> tasks = Collections.emptyList();
     private TasksAdapter tasksAdapter;
+
+    private SortType sortType = SortType.ALPHABETICAL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +70,40 @@ public class TasksListActivity extends AppCompatActivity
         loadTasks();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_tasks_list, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_sort) {
+            showSortingOptionsDialog();
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+
+        return true;
+    }
+
+    private void showSortingOptionsDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder
+                .setTitle(getResources().getString(R.string.sorting))
+                .setSingleChoiceItems(getResources().getStringArray(R.array.sorting_array), sortType.getValue(), (dialogInterface, i) -> {
+                    sortType = SortType.fromValue(i);
+                    Collections.sort(tasks, new TaskComparator(sortType));
+                    tasksAdapter.notifyDataSetChanged();
+
+                    dialogInterface.dismiss();
+                })
+                .create()
+                .show();
+
+    }
+
     private void initRecycler() {
         tasksAdapter = new TasksAdapter(tasks);
         recyclerViewTasks.setAdapter(tasksAdapter);
@@ -91,6 +132,7 @@ public class TasksListActivity extends AppCompatActivity
         this.tasks = tasks;
 
         tasksAdapter.setTasks(tasks);
+        Collections.sort(tasks, new TaskComparator(sortType));
         tasksAdapter.notifyDataSetChanged();
     }
 

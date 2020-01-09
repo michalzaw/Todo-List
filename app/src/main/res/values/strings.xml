@@ -10,6 +10,16 @@
     <string name="delete">Usuń</string>
     <string name="empty">---</string>
     <string name="complete">Oznacz jako ukończone</string>
+    <string name="sorting">sortowanie</string>
+
+    <string-array name="sorting_array">
+        <item>A-Z</item>
+        <item>Z-A</item>
+        <item>Od najnowszych</item>
+        <item>Od najstarszych</item>
+        <item>Od najważniejszych</item>
+        <item>Od najmniej ważnych</item>
+    </string-array>
 
     <string-array name="task_priorities">
         <item>Niski</item>
