@@ -5,30 +5,37 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mich.todolist.R;
 import com.mich.todolist.models.TaskEntity;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Michal on 01.11.2017.
  */
 
-public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHolder> {
+public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHolder> implements Filterable {
 
     private List<TaskEntity> tasksList;
+    private List<TaskEntity> tasksListOriginal;
     private OnClickListener onClickListener;
 
     public TasksAdapter(List<TaskEntity> tasksList) {
         this.tasksList = tasksList;
+        this.tasksListOriginal = tasksList;
     }
 
     public void setTasks(List<TaskEntity> tasksList) {
         this.tasksList = tasksList;
+        this.tasksListOriginal = tasksList;
     }
 
     public void setOnClickListener(OnClickListener onClickListener) {
@@ -61,6 +68,41 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
     @Override
     public int getItemCount() {
         return tasksList.size();
+    }
+
+    private Filter filter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) {
+
+            final FilterResults filterResults = new FilterResults();
+
+            if (charSequence != null) {
+                String searchedString = charSequence.toString().toLowerCase();
+
+                List<TaskEntity> results = new ArrayList<>();
+                for (final TaskEntity taskEntity : tasksListOriginal) {
+                    if (taskEntity.getTitle().toLowerCase().contains(searchedString)) {
+                        results.add(taskEntity);
+                    }
+                }
+
+                filterResults.values = results;
+            }
+
+            return filterResults;
+        }
+
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            tasksList = (ArrayList<TaskEntity>) filterResults.values;
+
+            notifyDataSetChanged();
+        }
+    };
+
+    @Override
+    public Filter getFilter() {
+        return filter;
     }
 
     public TaskEntity getTask(int index) {

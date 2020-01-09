@@ -11,6 +11,7 @@
     <string name="empty">---</string>
     <string name="complete">Oznacz jako ukończone</string>
     <string name="sorting">sortowanie</string>
+    <string name="search">szukaj</string>
 
     <string-array name="sorting_array">
         <item>A-Z</item>
