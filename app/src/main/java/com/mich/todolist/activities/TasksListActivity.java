@@ -76,6 +76,7 @@ public class TasksListActivity extends AppCompatActivity
         getMenuInflater().inflate(R.menu.menu_tasks_list, menu);
 
         SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setMaxWidth(Integer.MAX_VALUE);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
