@@ -10,8 +10,9 @@
     <string name="delete">Usuń</string>
     <string name="empty">---</string>
     <string name="complete">Oznacz jako ukończone</string>
-    <string name="sorting">sortowanie</string>
-    <string name="search">szukaj</string>
+    <string name="sorting">Sortowanie</string>
+    <string name="search">Szukaj</string>
+    <string name="add_attachment">Dodaj załącznik</string>
 
     <string-array name="sorting_array">
         <item>A-Z</item>

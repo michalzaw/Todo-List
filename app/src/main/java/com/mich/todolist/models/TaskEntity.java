@@ -27,8 +27,11 @@ public class TaskEntity implements Parcelable {
     private int category;
     @ColumnInfo(name = "done")
     private boolean done;
+    @ColumnInfo(name = "attachments")
+    private String attachments;
 
-    public TaskEntity(String title, String description, String date, int priority, int category, boolean done) {
+    public TaskEntity(String title, String description, String date, int priority, int category, boolean done, String attachments) {
+        this.attachments = attachments;
         this.id = id;
         this.title = title;
         this.description = description;
@@ -46,6 +49,24 @@ public class TaskEntity implements Parcelable {
         priority = in.readInt();
         category = in.readInt();
         done = in.readByte() != 0;
+        attachments = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(title);
+        dest.writeString(description);
+        dest.writeString(date);
+        dest.writeInt(priority);
+        dest.writeInt(category);
+        dest.writeByte((byte) (done ? 1 : 0));
+        dest.writeString(attachments);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     public static final Creator<TaskEntity> CREATOR = new Creator<TaskEntity>() {
@@ -116,19 +137,12 @@ public class TaskEntity implements Parcelable {
         this.done = done;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public String getAttachments() {
+        return attachments;
     }
 
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeInt(id);
-        parcel.writeString(title);
-        parcel.writeString(description);
-        parcel.writeString(date);
-        parcel.writeInt(priority);
-        parcel.writeInt(category);
-        parcel.writeByte((byte) (done ? 1 : 0));
+    public void setAttachments(String attachments) {
+        this.attachments = attachments;
     }
+
 }

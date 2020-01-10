@@ -14,7 +14,7 @@ import com.mich.todolist.models.TaskEntity;
  * Created by Michal on 30.11.2017.
  */
 
-@Database(entities = {TaskEntity.class}, version = 2)
+@Database(entities = {TaskEntity.class}, version = 3)
 public abstract class ApplicationDatabase extends RoomDatabase {
 
     private static final String DATABASE_NAME = "MainDatabase";
@@ -28,7 +28,7 @@ public abstract class ApplicationDatabase extends RoomDatabase {
         if (instance == null) {
             instance = Room
                     .databaseBuilder(context, ApplicationDatabase.class, DATABASE_NAME)
-                    .addMigrations(MIGRATION_1_2)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                     .build();
         }
 
@@ -39,6 +39,13 @@ public abstract class ApplicationDatabase extends RoomDatabase {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE task ADD COLUMN done INTEGER NOT NULL DEFAULT 0");
+        }
+    };
+
+    private static final Migration MIGRATION_2_3 = new Migration(2, 3) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE task ADD COLUMN attachments TEXT");
         }
     };
 }

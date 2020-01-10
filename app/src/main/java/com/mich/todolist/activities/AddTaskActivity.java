@@ -2,13 +2,21 @@ package com.mich.todolist.activities;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 
 import com.mich.todolist.R;
@@ -16,7 +24,9 @@ import com.mich.todolist.database.TaskRepository;
 import com.mich.todolist.models.TaskEntity;
 import com.mich.todolist.utilities.CalendarConverter;
 import com.mich.todolist.utilities.IntentExtras;
+import com.mich.todolist.utilities.PermissionsChecker;
 
+import java.io.IOException;
 import java.util.Calendar;
 
 import butterknife.BindView;
@@ -24,6 +34,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class AddTaskActivity extends AppCompatActivity {
+
+    private static final int PICK_PHOTO_REQUEST_CODE = 0;
 
     @BindView(R.id.editText_name)
     EditText editTextName;
@@ -37,8 +49,11 @@ public class AddTaskActivity extends AppCompatActivity {
     Spinner spinnerCategory;
     @BindView(R.id.spinner_priority)
     Spinner spinnerPriority;
+    @BindView(R.id.imageViewAttachment)
+    ImageView imageViewAttachment;
 
     private Calendar taskDate = Calendar.getInstance();
+    private Uri attachementUri;
 
     private TaskEntity task;
 
@@ -67,6 +82,12 @@ public class AddTaskActivity extends AppCompatActivity {
             editTextHour.setText(CalendarConverter.calendarToString(taskDate, CalendarConverter.SIMPLE_TIME_FORMAT));
             spinnerCategory.setSelection(task.getCategory());
             spinnerPriority.setSelection(task.getPriority());
+
+            String attachment = task.getAttachments();
+            if (attachment != null) {
+                attachementUri = Uri.parse(attachment);
+                showAttachment();
+            }
         } else {
 
         }
@@ -92,7 +113,7 @@ public class AddTaskActivity extends AppCompatActivity {
         int priority = spinnerPriority.getSelectedItemPosition();
 
         if (task == null) {
-            task = new TaskEntity(title, description, date, priority, category, false);
+            task = new TaskEntity(title, description, date, priority, category, false, attachementUri.toString());
 
             taskRepository.addTask(task, () -> {
                 finish();
@@ -104,9 +125,51 @@ public class AddTaskActivity extends AppCompatActivity {
             task.setDate(date);
             task.setCategory(category);
             task.setPriority(priority);
+            task.setAttachments(attachementUri.toString());
 
             taskRepository.updateTask(task);
             finish();
+        }
+    }
+
+    private void showAttachment() {
+        try {
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), attachementUri);
+            imageViewAttachment.setImageBitmap(bitmap);
+            imageViewAttachment.setVisibility(View.VISIBLE);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addAttachmentClick() {
+        PermissionsChecker.requestReadExternalStoragePermission(this, () -> {
+            Intent pickPhotoIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            pickPhotoIntent.setType("image/*");
+            pickPhotoIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    | Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+            startActivityForResult(pickPhotoIntent, PICK_PHOTO_REQUEST_CODE);
+
+            return null;
+        });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        PermissionsChecker.onRequestPermissionResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == PICK_PHOTO_REQUEST_CODE) {
+                if (data != null) {
+                    attachementUri = data.getData();
+                    getContentResolver().takePersistableUriPermission(attachementUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    showAttachment();
+                }
+            }
         }
     }
 
@@ -128,6 +191,8 @@ public class AddTaskActivity extends AppCompatActivity {
         } else if (item.getItemId() == R.id.action_complete_task) {
             task.setDone(true);
             saveTask();
+        } else if (item.getItemId() == R.id.action_add_attachment) {
+            addAttachmentClick();
         } else {
             return super.onOptionsItemSelected(item);
         }

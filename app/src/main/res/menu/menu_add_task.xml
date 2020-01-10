@@ -3,6 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/action_add_attachment"
+        android:icon="@drawable/baseline_attach_file_white_18dp"
+        android:title="@string/add_attachment"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/action_complete_task"
         android:icon="@android:drawable/checkbox_on_background"
         android:title="@string/complete"
