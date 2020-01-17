@@ -13,6 +13,10 @@
     <string name="sorting">Sortowanie</string>
     <string name="search">Szukaj</string>
     <string name="add_attachment">Dodaj załącznik</string>
+    <string name="export">Eksport listy do pliku</string>
+    <string name="enter_file_name">Podaj nazwę pliku</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Anuluj</string>
 
     <string-array name="sorting_array">
         <item>A-Z</item>

@@ -1,7 +1,9 @@
 package com.mich.todolist.activities;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.SearchView;
 
 import com.mich.todolist.R;
@@ -19,10 +22,17 @@ import com.mich.todolist.database.DeleteTaskAsyncTask;
 import com.mich.todolist.database.LoadTasksListAsyncTask;
 import com.mich.todolist.models.TaskEntity;
 import com.mich.todolist.utilities.IntentExtras;
+import com.mich.todolist.utilities.PermissionsChecker;
 import com.mich.todolist.utilities.RecyclerItemTouchHelperCallback;
 import com.mich.todolist.utilities.SortType;
 import com.mich.todolist.utilities.TaskComparator;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.List;
 
@@ -97,11 +107,18 @@ public class TasksListActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_sort) {
             showSortingOptionsDialog();
+        } else if (item.getItemId() == R.id.action_export_to_file) {
+            showExportTasksToFileDialog();
         } else {
             return super.onOptionsItemSelected(item);
         }
 
         return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        PermissionsChecker.onRequestPermissionResult(requestCode, permissions, grantResults);
     }
 
     private void showSortingOptionsDialog() {
@@ -118,6 +135,44 @@ public class TasksListActivity extends AppCompatActivity
                 .create()
                 .show();
 
+    }
+
+    private void showExportTasksToFileDialog() {
+        final EditText editText = new EditText(this);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder
+                .setTitle(R.string.export)
+                .setMessage(R.string.enter_file_name)
+                .setView(editText)
+                .setPositiveButton(R.string.ok, (dialogInterface, i) -> {
+                    exportTasksToFile(editText.getText().toString());
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .create()
+                .show();
+    }
+
+    private void exportTasksToFile(String fileName) {
+        PermissionsChecker.requestPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, () -> {
+            try {
+                File file = new File("mnt/sdcard/" + fileName);
+                file.createNewFile();
+
+                PrintWriter printWriter = new PrintWriter(new FileWriter(file));
+
+                for (TaskEntity task : tasks) {
+                    printWriter.println("* " + task.getTitle() + " (" + task.getDate() + ")");
+                    printWriter.println(task.getDescription());
+                }
+
+                printWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        });
     }
 
     private void initRecycler() {

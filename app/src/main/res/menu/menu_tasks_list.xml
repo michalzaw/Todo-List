@@ -11,4 +11,8 @@
         android:id="@+id/action_sort"
         android:title="@string/sorting"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_export_to_file"
+        android:title="@string/export"
+        app:showAsAction="never" />
 </menu>

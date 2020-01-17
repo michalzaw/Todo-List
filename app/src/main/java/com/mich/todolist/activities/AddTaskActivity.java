@@ -1,5 +1,6 @@
 package com.mich.todolist.activities;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
@@ -148,7 +149,7 @@ public class AddTaskActivity extends AppCompatActivity {
     }
 
     private void addAttachmentClick() {
-        PermissionsChecker.requestReadExternalStoragePermission(this, () -> {
+        PermissionsChecker.requestPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE, () -> {
             Intent pickPhotoIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
             pickPhotoIntent.setType("image/*");
             pickPhotoIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION

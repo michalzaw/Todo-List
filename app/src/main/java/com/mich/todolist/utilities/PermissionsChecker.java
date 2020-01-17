@@ -1,6 +1,5 @@
 package com.mich.todolist.utilities;
 
-import android.Manifest;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -14,16 +13,16 @@ import java.util.concurrent.Callable;
  */
 
 public class PermissionsChecker {
-    private static final int READ_EXTERNAL_STORAGE_REQUEST_CODE = 0;
+    private static final int REQUEST_CODE = 0;
 
     private static Callable<Void> onPermissionGrantedCallable;
 
-    public static boolean requestReadExternalStoragePermission(AppCompatActivity activity,
-                                                               @NonNull Callable<Void> onPermissinGranted) {
+    public static boolean requestPermission(AppCompatActivity activity,
+                                            String permission,
+                                            @NonNull Callable<Void> onPermissinGranted) {
         onPermissionGrantedCallable = onPermissinGranted;
 
-        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(activity, permission) == PackageManager.PERMISSION_GRANTED) {
             try {
                 onPermissionGrantedCallable.call();
             } catch (Exception e) {
@@ -33,8 +32,8 @@ public class PermissionsChecker {
             return true;
         } else {
             ActivityCompat.requestPermissions(activity,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    READ_EXTERNAL_STORAGE_REQUEST_CODE);
+                    new String[]{permission},
+                    REQUEST_CODE);
 
             return false;
         }
@@ -42,7 +41,7 @@ public class PermissionsChecker {
 
     public static boolean onRequestPermissionResult(int requestCode, @NonNull String[] permissions,
                                                     @NonNull int[] grantResults) {
-        if (requestCode == READ_EXTERNAL_STORAGE_REQUEST_CODE && grantResults.length > 0 &&
+        if (requestCode == REQUEST_CODE && grantResults.length > 0 &&
                 grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             try {
                 onPermissionGrantedCallable.call();
