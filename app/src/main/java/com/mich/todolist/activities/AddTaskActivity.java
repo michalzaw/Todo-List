@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
@@ -51,6 +52,8 @@ public class AddTaskActivity extends AppCompatActivity {
     Spinner spinnerPriority;
     @BindView(R.id.imageViewAttachment)
     ImageView imageViewAttachment;
+    @BindView(R.id.imageButtonRemoveAttachment)
+    ImageButton imageButtonRemoveAttachment;
 
     private Calendar taskDate = Calendar.getInstance();
     private Uri attachementUri;
@@ -138,6 +141,7 @@ public class AddTaskActivity extends AppCompatActivity {
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), attachementUri);
             imageViewAttachment.setImageBitmap(bitmap);
             imageViewAttachment.setVisibility(View.VISIBLE);
+            imageButtonRemoveAttachment.setVisibility(View.VISIBLE);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -222,5 +226,17 @@ public class AddTaskActivity extends AppCompatActivity {
             editTextHour.setText(CalendarConverter.calendarToString(taskDate, CalendarConverter.SIMPLE_TIME_FORMAT));
         }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), DateFormat.is24HourFormat(this))
                 .show();
+    }
+
+    @OnClick(R.id.imageButtonRemoveAttachment)
+    void onButtonRemoveAttachmentClick() {
+        imageViewAttachment.setVisibility(View.GONE);
+        imageButtonRemoveAttachment.setVisibility(View.GONE);
+
+        attachementUri = null;
+
+        if (task != null) {
+            task.setAttachments(null);
+        }
     }
 }
