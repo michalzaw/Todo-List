@@ -112,8 +112,9 @@ public class AddTaskActivity extends AppCompatActivity {
         int category = spinnerCategory.getSelectedItemPosition();
         int priority = spinnerPriority.getSelectedItemPosition();
 
+        String attachments = attachementUri != null ? attachementUri.toString() : null;
         if (task == null) {
-            task = new TaskEntity(title, description, date, priority, category, false, attachementUri.toString());
+            task = new TaskEntity(title, description, date, priority, category, false, attachments);
 
             taskRepository.addTask(task, () -> {
                 finish();
@@ -125,7 +126,7 @@ public class AddTaskActivity extends AppCompatActivity {
             task.setDate(date);
             task.setCategory(category);
             task.setPriority(priority);
-            task.setAttachments(attachementUri.toString());
+            task.setAttachments(attachments);
 
             taskRepository.updateTask(task);
             finish();
