@@ -23,7 +23,7 @@ import android.widget.SearchView;
 import com.mich.todolist.R;
 import com.mich.todolist.adapters.TasksAdapter;
 import com.mich.todolist.database.DeleteTaskAsyncTask;
-import com.mich.todolist.database.LoadTasksListAsyncTask;
+import com.mich.todolist.database.TaskRepository;
 import com.mich.todolist.models.TaskEntity;
 import com.mich.todolist.utilities.AlarmReceiver;
 import com.mich.todolist.utilities.AppConstants;
@@ -46,7 +46,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class TasksListActivity extends AppCompatActivity
-        implements LoadTasksListAsyncTask.LoadTasksListObserver, RecyclerItemTouchHelperCallback.RecyclerItemTouchHelperListener,
+        implements TaskRepository.LoadTasksListObserver, RecyclerItemTouchHelperCallback.RecyclerItemTouchHelperListener,
         DeleteTaskAsyncTask.DeleteTaskObserver {
 
     @BindView(R.id.recycerView_tasks)
@@ -57,6 +57,8 @@ public class TasksListActivity extends AppCompatActivity
 
     private SortType sortType = SortType.ALPHABETICAL;
 
+    TaskRepository taskRepository;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,7 +66,8 @@ public class TasksListActivity extends AppCompatActivity
 
         ButterKnife.bind(this);
 
-        LoadTasksListAsyncTask.getInstance(getApplicationContext()).addObserver(this);
+        taskRepository = new TaskRepository(this);
+
         DeleteTaskAsyncTask.getInstance(getApplicationContext()).addObserver(this);
 
         initRecycler();
@@ -86,7 +89,6 @@ public class TasksListActivity extends AppCompatActivity
     protected void onDestroy() {
         super.onDestroy();
 
-        LoadTasksListAsyncTask.getInstance(getApplicationContext()).removeObserver(this);
         DeleteTaskAsyncTask.getInstance(getApplicationContext()).removeObserver(this);
     }
 
@@ -205,7 +207,7 @@ public class TasksListActivity extends AppCompatActivity
     }
 
     private void loadTasks() {
-        LoadTasksListAsyncTask.getInstance(getApplicationContext()).execute();
+        taskRepository.loadAllTasks(this);
     }
 
     private void openTaskDetails(TaskEntity task) {
