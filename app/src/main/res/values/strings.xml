@@ -34,7 +34,8 @@
     </string-array>
 
     <string-array name="task_categories">
-        <item>Kategoria 1</item>
-        <item>Kategoria 2</item>
+        <item>Studia</item>
+        <item>Praca</item>
+        <item>Dom</item>
     </string-array>
 </resources>
