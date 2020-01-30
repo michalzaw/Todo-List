@@ -29,6 +29,8 @@ public class TaskEntity implements Parcelable {
     private boolean done;
     @ColumnInfo(name = "attachments")
     private String attachments;
+    @ColumnInfo(name = "isUserNotified")
+    private Boolean isUserNotified = false;
 
     public TaskEntity(String title, String description, String date, int priority, int category, boolean done, String attachments) {
         this.attachments = attachments;
@@ -50,6 +52,8 @@ public class TaskEntity implements Parcelable {
         category = in.readInt();
         done = in.readByte() != 0;
         attachments = in.readString();
+        byte tmpIsUserNotified = in.readByte();
+        isUserNotified = tmpIsUserNotified == 0 ? null : tmpIsUserNotified == 1;
     }
 
     @Override
@@ -62,6 +66,7 @@ public class TaskEntity implements Parcelable {
         dest.writeInt(category);
         dest.writeByte((byte) (done ? 1 : 0));
         dest.writeString(attachments);
+        dest.writeByte((byte) (isUserNotified == null ? 0 : isUserNotified ? 1 : 2));
     }
 
     @Override
@@ -145,4 +150,11 @@ public class TaskEntity implements Parcelable {
         this.attachments = attachments;
     }
 
+    public Boolean getUserNotified() {
+        return isUserNotified;
+    }
+
+    public void setUserNotified(Boolean userNotified) {
+        isUserNotified = userNotified;
+    }
 }

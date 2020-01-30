@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by Michal on 04.01.2018.
  */
-
+@Deprecated
 public class LoadTasksListAsyncTask extends AsyncTask<Void, Void, List<TaskEntity>> {
 
     public interface LoadTasksListObserver {

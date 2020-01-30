@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 
 import com.mich.todolist.models.TaskEntity;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 
 public class TaskRepository {
@@ -41,5 +42,22 @@ public class TaskRepository {
                 return null;
             }
         }.execute();
+    }
+
+    public void loadAllTasks(LoadTasksListObserver successCallback) {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                List<TaskEntity> tasks = ApplicationDatabase.getInstance(context).taskDao().getAllTasks();
+
+                successCallback.onTasksLoaded(tasks);
+
+                return null;
+            }
+        }.execute();
+    }
+
+    public interface LoadTasksListObserver {
+        void onTasksLoaded(List<TaskEntity> tasks);
     }
 }

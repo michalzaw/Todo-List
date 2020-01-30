@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK"></uses-permission>
 
     <application
         android:allowBackup="true"
@@ -21,6 +22,12 @@
         </activity>
         <activity android:name=".activities.AddTaskActivity" />
         <activity android:name=".activities.TaskDetailsActivity"></activity>
+
+        <receiver android:name=".utilities.AlarmReceiver">
+            <intent-filter>
+                <action android:name="com.mich.todolist.ALARM" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

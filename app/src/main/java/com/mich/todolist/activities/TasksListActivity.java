@@ -1,8 +1,12 @@
 package com.mich.todolist.activities;
 
 import android.Manifest;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +25,8 @@ import com.mich.todolist.adapters.TasksAdapter;
 import com.mich.todolist.database.DeleteTaskAsyncTask;
 import com.mich.todolist.database.LoadTasksListAsyncTask;
 import com.mich.todolist.models.TaskEntity;
+import com.mich.todolist.utilities.AlarmReceiver;
+import com.mich.todolist.utilities.AppConstants;
 import com.mich.todolist.utilities.IntentExtras;
 import com.mich.todolist.utilities.PermissionsChecker;
 import com.mich.todolist.utilities.RecyclerItemTouchHelperCallback;
@@ -28,11 +34,10 @@ import com.mich.todolist.utilities.SortType;
 import com.mich.todolist.utilities.TaskComparator;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
@@ -63,7 +68,18 @@ public class TasksListActivity extends AppCompatActivity
         DeleteTaskAsyncTask.getInstance(getApplicationContext()).addObserver(this);
 
         initRecycler();
-        //loadTasks();
+
+        startNotificationAlarm();
+    }
+
+    private void startNotificationAlarm() {
+        Intent intent = new Intent(this, AlarmReceiver.class);
+        intent.setAction("com.mich.todolist.ALARM");
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), AppConstants.FIFTEEN_MINUTES_IN_MILIS, pendingIntent);
+
     }
 
     @Override
