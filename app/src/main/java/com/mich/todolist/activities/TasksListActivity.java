@@ -46,7 +46,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class TasksListActivity extends AppCompatActivity
-        implements TaskRepository.LoadTasksListObserver, RecyclerItemTouchHelperCallback.RecyclerItemTouchHelperListener,
+        implements RecyclerItemTouchHelperCallback.RecyclerItemTouchHelperListener,
         DeleteTaskAsyncTask.DeleteTaskObserver {
 
     @BindView(R.id.recycerView_tasks)
@@ -207,22 +207,19 @@ public class TasksListActivity extends AppCompatActivity
     }
 
     private void loadTasks() {
-        taskRepository.loadAllTasks(this);
+        taskRepository.loadAllTasks(tasks -> {
+            this.tasks = tasks;
+
+            tasksAdapter.setTasks(tasks);
+            Collections.sort(tasks, new TaskComparator(sortType));
+            tasksAdapter.notifyDataSetChanged();
+        });
     }
 
     private void openTaskDetails(TaskEntity task) {
         Intent intent = new Intent(this, AddTaskActivity.class);
         intent.putExtra(IntentExtras.TASK, task);
         startActivity(intent);
-    }
-
-    @Override
-    public void onTasksLoaded(List<TaskEntity> tasks) {
-        this.tasks = tasks;
-
-        tasksAdapter.setTasks(tasks);
-        Collections.sort(tasks, new TaskComparator(sortType));
-        tasksAdapter.notifyDataSetChanged();
     }
 
     @Override

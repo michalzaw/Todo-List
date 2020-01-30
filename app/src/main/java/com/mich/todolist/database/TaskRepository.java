@@ -46,13 +46,19 @@ public class TaskRepository {
 
     public void loadAllTasks(LoadTasksListObserver successCallback) {
         new AsyncTask<Void, Void, Void>() {
+
+            private List<TaskEntity> tasks;
+
             @Override
             protected Void doInBackground(Void... voids) {
-                List<TaskEntity> tasks = ApplicationDatabase.getInstance(context).taskDao().getAllTasks();
-
-                successCallback.onTasksLoaded(tasks);
+                tasks = ApplicationDatabase.getInstance(context).taskDao().getAllTasks();
 
                 return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                successCallback.onTasksLoaded(tasks);
             }
         }.execute();
     }
