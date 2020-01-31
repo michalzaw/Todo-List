@@ -19,6 +19,9 @@ public interface TaskDao {
     @Query("SELECT * FROM task")
     List<TaskEntity> getAllTasks();
 
+    @Query("SELECT * FROM task WHERE isUserNotified = 0")
+    List<TaskEntity> getNotNotifiedTasks();
+
     @Insert
     void insert(TaskEntity task);
 

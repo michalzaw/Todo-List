@@ -63,7 +63,46 @@ public class TaskRepository {
         }.execute();
     }
 
+    public void loadNotNotifiedTasks(LoadTasksListObserver successCallback) {
+        new AsyncTask<Void, Void, Void>() {
+
+            private List<TaskEntity> tasks;
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+                tasks = ApplicationDatabase.getInstance(context).taskDao().getNotNotifiedTasks();
+
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                successCallback.onTasksLoaded(tasks);
+            }
+        }.execute();
+    }
+
+    public void deleteTask(TaskEntity task, DeleteTaskObserver successCallback) {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                ApplicationDatabase.getInstance(context).taskDao().delete(task);
+
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                successCallback.onDeletedTask(task);
+            }
+        }.execute();
+    }
+
     public interface LoadTasksListObserver {
         void onTasksLoaded(List<TaskEntity> tasks);
+    }
+
+    public interface DeleteTaskObserver {
+        void onDeletedTask(TaskEntity taskEntity);
     }
 }

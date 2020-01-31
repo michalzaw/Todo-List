@@ -17,7 +17,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         Log.d("BROADCAST_RECEIVER" ,"Start");
 
         TaskRepository taskRepository = new TaskRepository(context);
-        taskRepository.loadAllTasks(tasks -> {
+        taskRepository.loadNotNotifiedTasks(tasks -> {
             for (TaskEntity task : tasks) {
                 Calendar currentDate = Calendar.getInstance();
                 Calendar taskDate = CalendarConverter.stringToCalendar(task.getDate(), CalendarConverter.DATE_AND_TIME_FORMAT);

@@ -22,7 +22,6 @@ import android.widget.SearchView;
 
 import com.mich.todolist.R;
 import com.mich.todolist.adapters.TasksAdapter;
-import com.mich.todolist.database.DeleteTaskAsyncTask;
 import com.mich.todolist.database.TaskRepository;
 import com.mich.todolist.models.TaskEntity;
 import com.mich.todolist.utilities.AlarmReceiver;
@@ -46,8 +45,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class TasksListActivity extends AppCompatActivity
-        implements RecyclerItemTouchHelperCallback.RecyclerItemTouchHelperListener,
-        DeleteTaskAsyncTask.DeleteTaskObserver {
+        implements RecyclerItemTouchHelperCallback.RecyclerItemTouchHelperListener {
 
     @BindView(R.id.recycerView_tasks)
     RecyclerView recyclerViewTasks;
@@ -68,8 +66,6 @@ public class TasksListActivity extends AppCompatActivity
 
         taskRepository = new TaskRepository(this);
 
-        DeleteTaskAsyncTask.getInstance(getApplicationContext()).addObserver(this);
-
         initRecycler();
 
         startNotificationAlarm();
@@ -83,13 +79,6 @@ public class TasksListActivity extends AppCompatActivity
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), AppConstants.FIFTEEN_MINUTES_IN_MILIS, pendingIntent);
 
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        DeleteTaskAsyncTask.getInstance(getApplicationContext()).removeObserver(this);
     }
 
     @Override
@@ -224,17 +213,9 @@ public class TasksListActivity extends AppCompatActivity
 
     @Override
     public void onItemSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-        if (DeleteTaskAsyncTask.getInstance(getApplicationContext()).getStatus() != AsyncTask.Status.RUNNING) {
-            DeleteTaskAsyncTask.getInstance(getApplicationContext())
-                    .execute(tasksAdapter.getTask(viewHolder.getAdapterPosition()));
-
+        taskRepository.deleteTask(tasksAdapter.getTask(viewHolder.getAdapterPosition()), taskEntity -> {
             tasksAdapter.removeTask(viewHolder.getAdapterPosition());
-        }
-    }
-
-    @Override
-    public void onDeletedTask(TaskEntity taskEntity) {
-
+        });
     }
 
     @OnClick(R.id.floatingActionButton_addTask)
